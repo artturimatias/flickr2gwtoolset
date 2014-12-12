@@ -1,0 +1,291 @@
+body { 
+font-family: Verdana, Arial, sans-serif; 
+line-height: 1.4;
+font-size: 13px;
+
+margin: 0;
+padding: 0;
+color: #112211;
+}
+
+#header a{
+	color: white; 
+}
+
+a {color: green;  text-decoration: underline;}
+a:hover { text-decoration: underline; }
+
+#wrap { 
+
+padding: 20px;
+background: #fff;
+}
+
+#aineistot textarea{
+    width:50%;
+}
+
+#smalf textarea {
+    width:100%;
+}
+
+textarea {
+    width:100%;
+    height:10em;
+}
+
+#photos input {
+    width:100%;
+}
+
+#header div.headertext {
+    background: #333;
+    margin-right:160px;
+    height:150px;
+}
+
+#header h1 {
+padding:20px;
+margin: 20px;
+font-weight: 100;
+color: #fff;
+font-size: 29px;
+letter-spacing: 1px;
+line-height: 27px;
+}
+#header h1 a { text-decoration: none; color: #fff; }
+#header h1 a:hover { text-decoration: none; color: #eee; }
+#header h2 {display:block; font-size: 12px; padding: 0px; margin: 0; margin-top:60px;color: #eee; font-weight: 100;padding-right:10px;text-align:right; }
+
+#contentwrap {
+background: url(images/bg.png) repeat-y;
+padding: 0 20px 0 0;
+}
+
+#content {
+margin: 10px 0;
+float: right;
+width: 100%;
+color: #2F445F;
+
+}
+#content h2 {
+border-bottom: 1px solid ;
+clear:both;
+color: #2F445F;
+line-height: 30px;
+font-weight: 100;
+font-size: 18px;
+}
+
+#content h1 {
+color: #2F445F;
+line-height: 30px;
+font-weight: 100;
+font-size: 23px;
+}
+
+#content p { padding: 0 0 10px 0; color: #232323;}
+#content ul { padding: 0 20px 10px 30px; }
+
+#content .link{
+    font-weight: bold;
+    cursor:pointer;
+}
+
+#content .link:hover{
+    text-decoration:underline;
+}
+
+#content .button {
+    border: 1px solid #FF7F24;
+    padding: 2px;
+    margin:2px;
+    margin-left:20px;
+    background-color:green;
+    color:white;
+
+}
+
+#content .addinput, #content .addtextarea {
+    padding: 2px;
+    background-color:green;
+    color:white;
+
+}
+
+#content .div_title {
+    background-color:black;
+    color:white;
+    font-weight:bold;
+    padding: 2px;
+    padding-left: 20px;
+    height:16px;
+}
+
+#content .input_title , .link{
+    display:inline;
+
+}
+
+.hilite {
+    background-color:orange;
+}
+
+#content .addinput, #content .addtextarea {
+    position: relative;
+    top:-18px;
+    width: 20px;
+    height:16px;
+}
+
+
+#content .labelright {
+    position: absolute;
+    right: 0px;
+    width: 100px;
+    padding: 2px;
+    margin-top:-16px;
+}
+
+#content .holder {
+    margin-bottom:20px;
+}
+
+#content .frame  {
+    border: 1px solid #FF7F24;
+    padding: 5px;
+    margin-bottom:5px;
+
+}
+
+table {
+    width:100%;
+}
+
+table th, table td {
+  font-size : 77%;
+  background : #FBF6EA none; color : #630; 
+  vertical-align:top;
+
+}
+
+
+table td.info, table td.xml {
+    vertical-align:top;
+}
+table td.xml {
+    width:450px;
+}
+
+table td.ohje{
+    width:25%;
+    vertical-align:top;
+}
+
+#sidebar {
+float: left;
+width: 15%;
+margin: 10px 0;
+word-wrap:break-word;
+}
+
+#sidebar p { padding: 0 10px 10px 10px; color: #232323; }
+
+#sidebar ul {
+	padding: 5px 0 10px 5px;
+	margin: 0;
+	color: #aaa;
+	list-style-type: none;
+}
+
+#sidebar > ul > li {
+	line-height: 20px;
+	font-weight: 100;
+	margin: 0; padding:0px; 
+	color: #2F445F;
+	font-size: 12px;
+	border-bottom: 5px solid #D1D6DF;
+}
+
+#sidebar > ul > li > ul > li{
+	font-size: 12px;
+	line-height: 20px;
+	font-weight: normal;
+}
+
+
+
+#sidebar ul li {
+	margin: 0;
+}
+
+#sidebar ul li a {  }
+
+#sidebar > ul > li.nav_disabled {
+	color:#9D9D9D;
+}
+
+#sidebar > ul > li.thisPage {
+	font-weight: bold;
+}
+
+#footer { 
+	text-align: center;
+	color: #fff;
+	background: #434343;
+	padding: 10px 0;
+}
+
+#footer p { padding: 0; margin: 0; }
+#footer a { color: #fff; }
+#footer a:hover { text-decoration: underline; }
+
+#content p.note {
+border: 5px solid #FF7F24;
+padding: 5px;
+}
+
+#content p.enpara {
+color:gray;
+margin-left: 25px;
+}
+
+#content h2.entitle {
+color: gray;
+}
+
+#content .code {
+font-weight: bold;
+}
+
+.imageframe {
+	padding:5px;
+}
+
+.note, .license_alert {
+	line-height: 30px;
+	font-weight: 100;
+	margin: 0; padding:0px; 
+	color: #2F445F;
+	font-size: 12px;
+	border: 5px solid #FF7F24;
+    padding: 5px;
+}
+.month  {
+	display:inline;
+	width:20px;
+	margin:5px;
+	font-weight: 100;
+	border-bottom: 5px solid #D1D6DF;
+}
+.emptyMonth  {
+	display:inline;
+	width:20px;
+	margin:5px;
+}
+
+.pager {
+	background: #D1D6DF;
+	padding:3px;
+}

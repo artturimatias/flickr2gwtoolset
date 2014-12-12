@@ -1,0 +1,290 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/styles.css" />
+<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.css" />
+
+<script type="text/javascript" src="jquery/jquery-2.1.1.min.js"></script>
+<script type="text/javascript" src="jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="src/flickr2GWToolset.js"></script>
+<script type="text/javascript" src="src/languages.js"></script>
+<title>Flickr2GWToolset</title>
+</head>
+ 
+<body >
+	<div id="wrap">
+		<div id="header">
+		   <a style="display:block" target="_blank" href="http://fi.wikimedia.org/">
+		        <img src="../150px-WMFI.png" align="right"/>
+		    </a>
+		    
+		    <div class="headertext">
+			    <h1>Flickr2GWToolset</h1>
+			    <h2>BY: <a target="_blank" href="http://www.opendimension.org">Ari Häyrinen</a> | SOURCE: <a target="_blank" href="http://opendimension.org/wikimedia/flickr2gwtoolset">opendimension.org</a></h2>
+			</div>
+
+		</div>
+		<div id="sidebar"> </div> 
+		<div id="content">
+
+		<h2>Flickr2GWToolset</h2>
+		
+		<div id="intro"><p>Flickr2GWToolset is a simple web application for transferring Flickr images to Wikimedia Commons via <a href="http://www.mediawiki.org/wiki/Help:Extension:GWToolset" target="_blank">GWToolset</a>. The focus is in editing metadata before uploading.  Only <a href="http://creativecommons.org/licenses/by/2.0/deed.fi" target="_blank">Attribution</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.fi" target="_blank">ShareAlike</a> and "No known copyright restrictions" images are accepted.</p>
+
+		</div>
+	    <!-- <div>Language for user interface:
+            <select id="ui_lang_sel">
+            </select>
+        </div> -->
+            
+        <!--  storage starts -->
+        <div class="storage" style="display:none;">
+        
+            <!--  basic holder for one field-->
+            <div id="basic_holder">
+                <div class="holder">
+                    <div class="div_title">HOLDER_TITLE</div>
+                    <div class="frame">
+                        <div class="input_holder"></div>
+                   </div>
+               </div>
+           </div>
+           
+            <!--  holder for multiple fields -->
+            <div id="multi_holder">
+                <div class="holder">
+                    <div class="div_title">HOLDER_TITLE</div>
+                    <div class="link addinput">+</div>
+                    <div class="frame">
+                        <div class="input_holder"></div>
+                   </div>
+               </div>
+           </div>
+            <!--  holder for multiple textareas -->
+            <div id="multi_textarea_holder">
+                <div class="holder">
+                    <div class="div_title">HOLDER_TITLE</div>
+                    <div class="link addinput">+</div>
+                    <div class="frame">
+                        <div class="input_holder"></div>
+                   </div>
+               </div>
+           </div>
+            <!--  basic text input -->
+            <div id="basic_input">
+                <div>
+                    <div class="input_title">INPUT_TITLE</div> 
+                    <input class="rename_me" type="text" />
+                </div>
+            </div>
+            <!--  basic text input with wikidata link-->
+            <div id="basic_input_data">
+                <div>
+                    <div class="input_title">INPUT_TITLE</div> 
+                    <div class="labelright">
+                        <div class="link openwikidata">wikidata</div> 
+                    </div>
+                    <input class="rename_me" type="text" />
+                </div>
+            </div>
+            <!--  basic text input with autocomplete-->
+            <div id="basic_input_data_auto">
+                <div>
+                    <div class="input_title">INPUT_TITLE</div> 
+                    <div class="labelright">
+                        <div class="link openwikidata">wikidata</div>
+                    </div>
+                    <input class="rename_me autocomplete" type="text" />
+                </div>
+            </div>
+            <!--  basic text input with language selection-->
+            <div id="basic_lang_input">
+                <div>
+                    <div class="input_title">INPUT_TITLE</div> 
+                    <select class="language_selection">
+
+                     </select>
+                     <input class="rename_me" type="text" />
+                </div>
+            </div>
+            <!--  basic textarea input with language selection-->
+            <div id="textarea_input">
+                <div>
+                    <div class="input_title">INPUT_TITLE</div> 
+                    <select class="language_selection">
+
+                     </select>
+                    <textarea class="rename_me"></textarea>
+                </div>
+            </div>
+            
+        </div>
+        <!--  storage ends -->
+
+
+		    <h2>Flickr</h2>
+            <table>
+                <tr>
+                    <td>
+                        <span id="your_apikey">Your Flickr API key?</span>:
+                   </td>
+                   <td>
+                        <input id="apikey" type="text" value="" name="apikey"></input>
+                   </td>
+               </tr>
+                <tr>
+                    <td>
+                        <span id="flickralbumnro">What is the Flickr album number?</span>:
+                   </td>
+                   <td>
+                        <input id="setid" type="text" value="72157644983155892" name="setid"></input>
+                   </td>
+               </tr>
+               <tr>
+                   <td>
+                        <span id="flickralbumnro">How many images to fetch?</span>
+                   </td>
+                   <td>
+                        <input id="imgcount" type="text" value="2" name="imgcount"></input>
+                   </td>
+                </tr>
+            </table>
+
+            <div>
+                <input type="submit" id="submit" value="Fetch from Flickr"/>
+               
+            </div>
+            
+            <h2 id="header_batchtools">Batch tools</h2>
+            <div id="aineistot">
+                <table>
+                    <tr>
+                        <th>Field</th>
+                        <th>Action</th>
+                        <th>Help</th>
+                    </tr>
+                    <tr>
+                        <td>
+                            <select id="fieldSelect">
+                                <option value="title">title</option>
+                                <option value="author">author</option>
+                                <option value="description">description</option>
+                            </select>
+         
+                        </td>
+                        <td> <table>
+                                <tr>
+                               
+                                    <td>search:</td>
+                                    <td>replace: </td>
+                                </tr>
+                                <tr id="smalf">   
+                                    <td><textarea id="searchText"></textarea></td>
+                                    <td><textarea id="replaceText"></textarea></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div>
+                                            <input type="submit" id="replace" value="search&replace"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td id="help_all_search_replace" class="ohje">
+                            Choose a field from the dropdown, copy the text you want to replace to the first textbox and write/copy the new text to the second textbox. You can also add text to empty fields (for example set the same author for all images).
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Date
+                        </td>
+                        <td>
+                            <div id="all_remove_time"class="link">Remove hours, minutes and hours</div>
+                        </td>
+                        <td id="help_all_remove_time" class="ohje">
+                            Handy for historical images. See also <a href="http://commons.wikimedia.org/wiki/Template:date" target="_blank">date</a>.
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>
+                            Date
+                        </td>
+                        <td>
+                            <div class="link" id="all_leave_year">Leave only year.</div>
+                        </td>
+                        <td id="help_all_leave_year" class="ohje">
+                            Handy for historical images.
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            Author
+                        </td>
+                        <td>
+                            <div class="link" id="all_add_creator">Add Creator template to all authors</div>
+                        </td>
+                        <td class="ohje">
+                             <a href="http://commons.wikimedia.org/wiki/Commons:Creator#Who_should_have_creator_page" target="_blank">who should have a creator? </a>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <td>
+                            Creator
+                        </td>
+                        <td>
+                            <div class="link" id="all_remove_creator">Remove Creator template from all authors.</div>
+                        </td>
+                        <td class="ohje">
+                             <a href="http://commons.wikimedia.org/wiki/Commons:Creator#Who_should_have_creator_page" target="_blank">who should have a creator? </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            Keeper
+                        </td>
+                        <td>
+                            <div class="link" id="all_add_institution">Add Institution to all Keeper fields.</div>
+                        </td>
+                        <td class="ohje">
+                             Adding Institution template is a good practice. </a>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+
+            
+
+            
+            <h3>Information about the album</h3> 
+            <div id="set"></div>
+             
+           <h3>Photos and their metadata</h3> 
+            <div id="photos"></div>
+
+
+             <div>
+                <input type="submit" id="convert" value="Convert for GWToolset"/>
+                <!-- <input type="submit" id="convertWIKI" value="Konvertoi WIKIin"/> -->
+                <textarea id="xmlout"></textarea>
+            </div>
+            
+            
+            
+            
+        </div>
+    </div>
+ 
+
+
+
+
+</body>
+</html>
