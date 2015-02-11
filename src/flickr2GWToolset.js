@@ -172,9 +172,10 @@ function fetchURL(photoid, cont) {
 
     var jqxhr = $.get( "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+apikey+"&photo_id="+photoid, function(data) {
 	    var d = $(data).find('size[label="Medium"]').attr("source");
+	    var large = $(data).find('size[label="Original"]').attr("source");
 	    cont.find(".div_img").append('<img src="'+d+'" /><br />');
-	    cont.find(".imgurl").append(d);
-	    cont.find(".imgurl").val(d);
+	    cont.find(".imgurl").val(large);
+
     })
       .done(function() {
       })
@@ -243,6 +244,14 @@ function fetchInfo(photoid, cont) {
 	    cont.find(".keeper").parent().append('<div class="link remove_institution">'+lang.remove_institution+'</div> | ');
 	    cont.find(".keeper").parent().append('<div class="link open_commons">etsi mallinetta</div>');
 
+        // source
+        insertInput2("#multi_holder","#basic_input", lang.source_url, "source", cont.find(".xml"));
+        cont.find(".source").val($xml.find("url").text()); 
+
+        // accession number
+        insertInput2("#multi_holder","#basic_input", lang.accession_number, "accession_number", cont.find(".xml"));
+	     
+
 	    // license
 	    insertInput2("#basic_holder","#basic_input", lang.rights, "license", cont.find(".xml"));
 	    cont.find(".license").val(licenses[license]);
@@ -296,7 +305,7 @@ function addEvents(cont) {
         var d = $(this).parent().find(".input_holder").first().clone();
         d.find("input").val("");
         d.find("input").attr('id',newid);
-        addAutocomplete(d.find("input"));
+        addAutocomplete(d.find("input.autocomplete"));
         var holder = $(this).parent().find(".frame");
         holder.append(d);
         addEvents(d);
@@ -487,12 +496,23 @@ function convertSet() {
                 xml += "    <depicted_place>" + $(this).val() + "</depicted_place>\n";
         });
 
+        // source
+        $(this).find('.source').each(function() {
+            if ($(this).val().trim() != '')
+                xml += "    <source>" + $(this).val() + "</source>\n";
+        });
+
+        // accession numbers
+        $(this).find('.accession_number').each(function() {
+            if ($(this).val().trim() != '')
+                xml += "    <accession_number>" + $(this).val() + "</accession_number>\n";
+        });
+
         xml += "    <keeper>" + $(this).find('.keeper').val() + "</keeper>\n";
         xml += "    <date>" + $(this).find('.date').val() + "</date>\n";
         xml += "    <permissions>" + $(this).find('.license').val() + "</permissions>\n";
 
         var imgurl = $(this).parents('table').find('.imgurl').val();
-        imgurl = imgurl.replace(".jpg", "_o.jpg");  // we always upload original
         xml += "    <imgurl>"+imgurl+"</imgurl>\n";
         xml += "  </record>\n";
         
@@ -555,4 +575,3 @@ function listItems (cont, selectorClass, templateProperty) {
     else 
         return '';
 }
-
