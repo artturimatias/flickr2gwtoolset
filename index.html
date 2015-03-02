@@ -6,6 +6,7 @@
 
 <script type="text/javascript" src="jquery/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="jquery-ui/jquery-ui.js"></script>
+<script type="text/javascript" src="SaxonceDebug/Saxonce.nocache.js"></script>
 <script type="text/javascript" src="src/flickr2GWToolset.js"></script>
 <script type="text/javascript" src="src/languages.js"></script>
 <title>Flickr2GWToolset</title>
@@ -15,7 +16,7 @@
 	<div id="wrap">
 		<div id="header">
 		   <a style="display:block" target="_blank" href="http://fi.wikimedia.org/">
-		        <img src="../150px-WMFI.png" align="right"/>
+		        <img src="images/150px-WMFI.png" align="right"/>
 		    </a>
 		    
 		    <div class="headertext">
@@ -27,102 +28,20 @@
 		<div id="sidebar"> </div> 
 		<div id="content">
 
-		<h2>Flickr2GWToolset</h2>
+		<h1>Flickr2GWToolset</h1>
 		
-		<div id="intro"><p>Flickr2GWToolset is a simple web application for transferring Flickr images to Wikimedia Commons via <a href="http://www.mediawiki.org/wiki/Help:Extension:GWToolset" target="_blank">GWToolset</a>. The focus is in editing metadata before uploading.  Only <a href="http://creativecommons.org/licenses/by/2.0/deed.fi" target="_blank">Attribution</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.fi" target="_blank">ShareAlike</a> and "No known copyright restrictions" images are accepted.</p>
+		<div id="intro">
+			<p>Flickr2GWToolset is a simple web application for transferring Flickr images to Wikimedia Commons via <a href="http://www.mediawiki.org/wiki/Help:Extension:GWToolset" target="_blank">GWToolset</a>. The focus is in editing metadata before uploading.  Only <a href="http://creativecommons.org/licenses/by/2.0/deed.fi" target="_blank">Attribution</a>, <a href="https://creativecommons.org/licenses/by-sa/2.0/deed.fi" target="_blank">ShareAlike</a> and "No known copyright restrictions" images are accepted.</p>
+           
 
 		</div>
-	    <!-- <div>Language for user interface:
-            <select id="ui_lang_sel">
-            </select>
-        </div> -->
-            
-        <!--  storage starts -->
-        <div class="storage" style="display:none;">
-        
-            <!--  basic holder for one field-->
-            <div id="basic_holder">
-                <div class="holder">
-                    <div class="div_title">HOLDER_TITLE</div>
-                    <div class="frame">
-                        <div class="input_holder"></div>
-                   </div>
-               </div>
-           </div>
-           
-            <!--  holder for multiple fields -->
-            <div id="multi_holder">
-                <div class="holder">
-                    <div class="div_title">HOLDER_TITLE</div>
-                    <div class="link addinput">+</div>
-                    <div class="frame">
-                        <div class="input_holder"></div>
-                   </div>
-               </div>
-           </div>
-            <!--  holder for multiple textareas -->
-            <div id="multi_textarea_holder">
-                <div class="holder">
-                    <div class="div_title">HOLDER_TITLE</div>
-                    <div class="link addinput">+</div>
-                    <div class="frame">
-                        <div class="input_holder"></div>
-                   </div>
-               </div>
-           </div>
-            <!--  basic text input -->
-            <div id="basic_input">
-                <div>
-                    <div class="input_title">INPUT_TITLE</div> 
-                    <input class="rename_me" type="text" />
-                </div>
-            </div>
-            <!--  basic text input with wikidata link-->
-            <div id="basic_input_data">
-                <div>
-                    <div class="input_title">INPUT_TITLE</div> 
-                    <div class="labelright">
-                        <div class="link openwikidata">wikidata</div> 
-                    </div>
-                    <input class="rename_me" type="text" />
-                </div>
-            </div>
-            <!--  basic text input with autocomplete-->
-            <div id="basic_input_data_auto">
-                <div>
-                    <div class="input_title">INPUT_TITLE</div> 
-                    <div class="labelright">
-                        <div class="link openwikidata">wikidata</div>
-                    </div>
-                    <input class="rename_me autocomplete" type="text" />
-                </div>
-            </div>
-            <!--  basic text input with language selection-->
-            <div id="basic_lang_input">
-                <div>
-                    <div class="input_title">INPUT_TITLE</div> 
-                    <select class="language_selection">
-
-                     </select>
-                     <input class="rename_me" type="text" />
-                </div>
-            </div>
-            <!--  basic textarea input with language selection-->
-            <div id="textarea_input">
-                <div>
-                    <div class="input_title">INPUT_TITLE</div> 
-                    <select class="language_selection">
-
-                     </select>
-                    <textarea class="rename_me"></textarea>
-                </div>
-            </div>
-            
-        </div>
-        <!--  storage ends -->
+		<div>
+			<a target="_blank" href="http://commons.wikimedia.org/wiki/Commons:Guide_to_batch_uploading">Guide to batch uploading</a>
+		</div>
 
 
-		    <h2>Flickr</h2>
+
+		    <h2>Get XML from Flickr</h2>
             <table>
                 <tr>
                     <td>
@@ -131,7 +50,20 @@
                    <td>
                         <input id="apikey" type="text" value="" name="apikey"></input>
                    </td>
+                   <td>
+                   
+                   </td>
                </tr>
+               <tr>
+                   <td>
+                        <span id="flickrcount">Which images to fetch? (0 is first)</span>
+                   </td>
+                   <td>
+                        from <input class="shorter" id="imgcount_from" type="text" value="0" /> to 
+                        <input class="shorter" id="imgcount_to" type="text" value="2" />
+                   </td>
+                   <td></td>
+                </tr>
                 <tr>
                     <td>
                         <span id="flickralbumnro">What is the Flickr album number?</span>:
@@ -139,37 +71,53 @@
                    <td>
                         <input id="setid" type="text" value="72157644983155892" name="setid"></input>
                    </td>
+                   <td>
+					<input type="submit" id="fetch_by_album" value="Fetch images by Flickr album"/>
+                   </td>
                </tr>
-               <tr>
-                   <td>
-                        <span id="flickralbumnro">How many images to fetch?</span>
+                <tr>
+                    <td>
+                        <span id="flickruser">What is the Flickr user id?</span>:
                    </td>
                    <td>
-                        <input id="imgcount" type="text" value="2" name="imgcount"></input>
+                        <input id="userid" type="text" value="72157644983155892" name="setid"></input>
                    </td>
-                </tr>
+                   <td>
+					<input type="submit" id="fetch_by_user" value="Fetch images by Flickr user"/>
+                   </td>
+               </tr>
+
             </table>
 
             <div>
-                <input type="submit" id="submit" value="Fetch from Flickr"/>
+                
                
             </div>
+
+		    <h2>Your XML:</h2>
+		   
+		    
+		    <textarea id="xml" rows="20" cols="100"></textarea>
+		    <br />
+			<input id="editXML" type="button" value="Edit with ..."/> template 
+			<select id="template_sel">
+				<option value="edit_photo">Photograph</option>
+				<option value="edit_map">Map</option>
+			</select>
+
             
-            <h2 id="header_batchtools">Batch tools</h2>
-            <div id="aineistot">
+            <h2 id="header_batchtools">Batch metadata tools (remember, there is NO undo!)</h2>
+            <div id="tools">
                 <table>
                     <tr>
                         <th>Field</th>
-                        <th>Action</th>
+                        <th>Options</th>
                         <th>Help</th>
                     </tr>
                     <tr>
                         <td>
                             <select id="fieldSelect">
-                                <option value="title">title</option>
-                                <option value="author">author</option>
-                                <option value="description">description</option>
-                                <option value="keeper">keeper</option>
+
                             </select>
          
                         </td>
@@ -181,26 +129,84 @@
                                 </tr>
                                 <tr id="smalf">   
                                     <td><textarea id="searchText"></textarea></td>
-                                    <td><textarea id="replaceText"></textarea></td>
-                                </tr>
-                                <tr>
-                                    <td>
-                                        <div>
-                                            <input type="submit" id="replace" value="search&replace"/>
-                                        </div>
+                                    <td><textarea id="replaceText"></textarea>
+                                    <input id="overwrite" type="checkbox"> overwrite all
                                     </td>
                                 </tr>
+
                             </table>
                         </td>
-                        <td id="help_all_search_replace" class="ohje">
+                        <td class="ohje">
+							<div id="help_all_search_replace" >
                             Choose a field from the dropdown, copy the text you want to replace to the first textbox and write/copy the new text to the second textbox. You can also add text to empty fields (for example set the same author for all images).
+                            Overwrite -option allows you to replace current value.
+                            </div>
+                             <div>
+								<input type="submit" id="replace" value="search&replace"/>
+                             </div>
 
                         </td>
                     </tr>
 
                     <tr>
                         <td>
-                            Date
+                            commons_title
+                        </td>
+                        <td>default separator:  <input class="shorter" type="text" id="file_title1_default_sep" />
+                            prefix: <input class="short" type="text" id="file_title_prefix" /> + 
+                            <div class="frame">
+								<input class="shorter" type="text" id="file_title1_prefix" /> + 
+								 <select id="file_title1">
+									
+									<option value="empty">empty</option>
+
+								</select> + 
+								<input class="shorter" type="text" id="file_title1_postfix" />
+                            </div>
+                            <div class="frame">
+								<input class="shorter" type="text" id="file_title2_prefix" /> + 
+								 <select id="file_title2">
+									<option value="empty">empty</option>
+								</select> + 
+								<input class="shorter" type="text" id="file_title2_postfix" /> 
+                            </div>
+                            <div class="frame">
+								<input class="shorter" type="text" id="file_title3_prefix" /> + 
+
+								 <select id="file_title3">
+									<option value="empty">empty</option>
+								</select> + 
+                            <input class="shorter" type="text" id="file_title3_postfix" /> 
+                            </div> + postfix: 
+                            <input class="short" type="text" id="file_title_postfix" /> 
+                           
+                            
+                            <div></div>
+                        </td>
+                        <td class="ohje">
+                            This will be the name of the file in Commmons and it must be unique!
+                            <div><input type="submit" id="all_set_file_title" value="generate titles" /></div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            date
+                        </td>
+                        <td>
+                            <input type="text" id="set_date" /> 
+                        </td>
+                        <td class="ohje">
+                            Set same date for all images regardless of existing values.
+                            <div><input type="submit" id="all_set_date" value="set dates" /></div>
+                        </td>
+                    </tr>
+
+
+                    <tr>
+                        <td>
+                            date
                         </td>
                         <td>
                             <div id="all_remove_time"class="link">Remove hours, minutes and hours</div>
@@ -212,7 +218,7 @@
 
                     <tr>
                         <td>
-                            Date
+                            date
                         </td>
                         <td>
                             <div class="link" id="all_leave_year">Leave only year.</div>
@@ -224,7 +230,7 @@
                     
                     <tr>
                         <td>
-                            Author
+                            author
                         </td>
                         <td>
                             <div class="link" id="all_add_creator">Add Creator template to all authors</div>
@@ -236,7 +242,7 @@
                     
                     <tr>
                         <td>
-                            Creator
+                            creator
                         </td>
                         <td>
                             <div class="link" id="all_remove_creator">Remove Creator template from all authors.</div>
@@ -247,19 +253,172 @@
                     </tr>
                     <tr>
                         <td>
-                            Keeper
+                            institution
                         </td>
                         <td>
-                            <div class="link" id="all_add_institution">Add Institution to all Keeper fields.</div>
+                            <div class="link" id="all_add_institution">Add Institution to all institution fields.</div>
                         </td>
                         <td class="ohje">
                              Adding Institution template is a good practice. </a>
                         </td>
                     </tr>
+                    
+                    <tr>
+                        <td>
+						   <select id="all_start_end_field">
+
+							</select>
+                        </td>
+                        <td> 
+
+                            <input type="text" id="all_start" /> + selected field value +
+
+                            <input type="text" id="all_end" /> 
+
+
+                        </td>
+                        <td class="ohje">
+                            Insert something to the beginning of the field and the end. For example, you can set other date this way for single year.
+                             <div>
+								<input type="submit" id="all_start_end_set" value="Set!" />
+                            </div>
+                        </td>
+                    </tr>  
+                    
+                    <!-- key - value -->
+                    
+                    <tr>
+                        <td>
+							 <select id="keyval_source">
+
+							</select>
+                        </td>
+                        <td> 
+
+                            text after this: <input type="text" id="keyval" /> to field: 
+                            	<select id="keyval_target">
+
+								</select>
+
+                        </td>
+                        <td class="ohje">
+                            Use for key-value pairs (in each line)
+                            <div>
+								<!-- <input type="submit" id="regex_try" value="Try first!" /> -->
+								<input type="submit" id="keyval_set" value="Set!" />
+                            </div>
+                        </td>
+                    </tr>
+
+                     <tr>
+                        <td>
+						   <select id="all_def_lang">
+								<option value="description">description</option>
+								<option value="title">title</option>
+							</select>
+                        </td>
+                        <td> set language to: 
+
+						   <select id="all_def_lang_sel">
+								<option value="fi">suomi</option>
+								<option value="en">englanti</option>
+							</select>
+
+
+                        </td>
+                        <td class="ohje">
+                            Set the language of a certain field
+                            <div>
+								<input type="submit" id="all_set_def_lang" value="Set language!" />
+                            </div>
+                        </td>
+                    </tr>  
+
+                     <tr>
+                        <td>
+							selection
+                        </td>
+                        <td>
+                        </td>
+                        <td class="ohje">
+                            Toggle selection of images.
+                            <div>
+								<input type="submit" id="all_toggle_sel" value="Toggle selections" />
+								<input type="submit" id="all_select_all" value="select all" />
+                            </div>
+                        </td>
+                    </tr>  
+
+
+					<tr>
+						<td><b>EXPERIMENTAL</b> </td>
+						<td><b>EXPERIMENTAL</b> </td>
+						<td><b>EXPERIMENTAL</b> </td>
+					</tr>
+					<!-- regexp -->
+                    <tr>
+                        <td>
+							 <select id="regex_source">
+
+							</select>
+                        </td>
+                        <td> 
+
+                            by regexp: <input type="text" id="regex" /> to field: 
+                            	<select id="regex_target">
+
+								</select>
+								<input type="checkbox" id="regex_append" title="append text to the field"/> append
+								<input type="checkbox" id="regex_move" title="remove text from original"/> cut
+
+								<div class="frame">
+									<input type="checkbox" id="regex_add_field" title="create new field"/> Add new field in language 
+									<select id="regex_new_lang">
+										<option value="fi">suomeksi</option>
+										<option value="sv">ruotsiksi</option>
+										<option value="en">englanniksi</option>
+
+									</select>									
+								</div>
+
+                        </td>
+                        <td class="ohje">
+                            Use regular expression to seek information and put that to a selected field.
+                            Good place to learn: <a target="_blank" href="https://regex101.com/#javascript">https://regex101.com/#javascript</a>
+                            <div>
+								<input type="submit" id="regex_test" value="test regexp!" title="Puts output to Inspect area below" />
+								<input type="submit" id="regex_set" value="run regexp!" />
+                            </div>
+                        </td>
+                    </tr>
+
+ 
+
+
+                     <tr>
+                        <td>
+							<select id="inspect_target">
+
+							</select>
+                        </td>
+                        <td>
+
+                        </td>
+                        <td class="ohje">
+                            Inspect any fields in a compact from.
+                            <div>
+								<input type="submit" id="all_inspect" value="inspect" />
+								<input type="submit" id="all_inspect_clear" value="clear" />
+                            </div>
+                        </td>
+                    </tr>  
+
+                    
                 </table>
             </div>
 
-
+			<h3>Inspect</h3>
+			<div id="inspect_area"></div>
 
             
 
@@ -268,6 +427,7 @@
             <div id="set"></div>
              
            <h3>Photos and their metadata</h3> 
+           <div id="toggle_all" class="button">toggle all</div>
             <div id="photos"></div>
 
 

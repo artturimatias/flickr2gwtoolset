@@ -7,12 +7,26 @@ var wikipedia = "http://fi.wikipedia.org/wiki/"
 var wikidata = "http://wikidata.org/wiki/"
 var commons = "http://commons.wikimedia.org/wiki/";
 var base = "http://commons.wikimedia.org/w/index.php?title=Special:ExpandTemplates&wpInput=";
+var flickrSetURL = "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&photoset_id=";
+var flickrUserURL = "https://api.flickr.com/services/rest/?method=flickr.people.getPhotos&user_id=";
 var licenses={4: '{{Template:Cc-by-2.0}}',5:'{{Template:Cc-by-sa-2.0}}',7:'{{Template:Flickr-no_known_copyright_restrictions}}'};
 var licensesPlain={4: 'Cc-by-2.0',5:'Cc-by-sa-2.0',7:'No known copyright restrictions'};
 var cloneCount = 0;
 var lang = {};
+var xml = '';
+var nodes = [];
+var fields = ['accession_number', 'author', 'date','depicted_people','depicted_place', 'commons_title','description_fi','description_en', 'photographer', 'title_fi','title_en']
+var ixml;
 
- 
+//onSaxonLoad = function() { 
+
+	//var p = getParameter('file');
+	
+	//var xml = Saxon.requestXML("xml/"+p+".xml");
+	//ixml = Saxon.parseXML(xml);
+	//$("#xml").val(ixml);
+	//alert(ixml);
+//} 
  
 $(document).ready(function(){
 
@@ -27,22 +41,37 @@ $(document).ready(function(){
     if (apikey != '')
         $("#apikey").val(apikey);
 
-	// create UI language selection
-	//for (var i in langs) {
-	//	$('#ui_lang_sel').append('<option value="'+langs[i].code+'">'+langs[i].ui_lang+'</option');
-	//}
+	//var p = getParameter('file');
+    //var jqxhr = $.get( "xml/" + p + ".xml", function(data) {
+    //})
+      //.done(function(data) {
+			//var d = $(data).find('source').text();
+			//var xmlString = (new XMLSerializer()).serializeToString(data); // does not work on IE
+			//$("#xml").val(xmlString);
+			
 
-    //$("#ui_lang_sel").val(ui_lang);
+      //})
+      //.fail(function() {
+        //alert( "ei onnistu" );
+      //})
+      //.always(function() {
+      //});
 
-    // language chooser event
-    //$("#ui_lang_sel").on("change", function() {
-    //    lang = langs[$(this).val()];
-    //	for (var i in lang) {
-	//	    $('#' + i).html(lang[i]);
-	//    }
-    //});
+
+	// generate field select options for tools
+	$('#tools').find('select').each(function() {
+		for (i=0; i < fields.length; i++) {
+			$(this).append('<option>'+fields[i]+'</option>');
+		}
+	});
 
     // add click events
+    $( "#all_set_date" ).on( "click", function(e) {
+        $(".date").each(function() {
+            $(this).val($('#set_date').val());
+        });
+    });    
+
     $( "#all_remove_time" ).on( "click", function(e) {
         $(".date").each(function() {
             $(this).val(removeTime($(this).val()));
@@ -75,35 +104,127 @@ $(document).ready(function(){
         });
     });
 
-    // buttons
-    $("#submit").click(function() {
-        fetchSet();
-    	}); 
-    $("#dummy").click(function() {
-        dummySet();
-    	}); 
+
+
+	// buttons
+    $("#all_set_file_title").click(function() {
+        generateTitles();
+   	}); 
+    	
+    $("#fetch_by_album").click(function() {
+        fetchImages(flickrSetURL + $("#setid").val() + '&api_key=');
+   	});
+
+    $("#fetch_by_user").click(function() {
+        fetchImages(flickrUserURL + $("#userid").val() + '&api_key=');
+   	});
+    	 
+    $("#toggle_all").click(function(c) {
+        $('.holder').toggle();
+   	});
+
     $("#replace").click(function() {
         searchAndReplace();
-    	});
+   	});
+    	
     $("#convert").click(function() {
         convertSet();
-    	}); 
+    }); 
+    	
     $("#convertWIKI").click(function() {
         convertSet2WIKI();
-    	}); 
+    }); 
+    	
+	$("#editXML").click(function() {
+		transform();
+	});
+	
+	$("#regex_test").click(function() {
+		regexTest();
+	});
+
+	$("#regex_set").click(function() {
+		regexSet();
+	});
+	
+	$("#all_set_def_lang").click(function() {
+		allSetLang();
+	});
+	
+	$("#all_start_end_set").click(function() {
+		allSetStartEnd();
+	});
+
+	$("#all_toggle_sel").click(function() {
+		allToggleSel();
+	});
+
+	$("#all_select_all").click(function() {
+		$('.enabled').each(function() {
+			$(this).prop('checked', true);
+		});
+	});
+
+	$("#keyval_set").click(function() {
+		allKeyVal();
+	});
+
+	$("#all_inspect").click(function() {
+		allInspect();
+	});
+
+	$("#all_inspect_clear").click(function() {
+		$('#inspect_area').empty();
+	});
+
 });
 
 
+function allInspect() {
+	var field = $('#inspect_target').val();
+	$('#inspect_area').html('<h2>'+field+'</h2>');
+	$('.'+field).each(function() {
+		var val = $(this).val().replace('\n','</br>')
+		$('#inspect_area').append('<div class="inspect">' + val + '</div>')
+	});
+}
+
+function allToggleSel() {
+	$('.enabled').each(function() {
+		$(this).trigger('click');
+	});
+}
+
+function toggle(cont) {
+	cont.parents('tr').next().find('.holder').toggle();
+}
+
+
+function getImageURLs(data) {
+	
+	i = 0;
+	var from = parseInt($("#imgcount_from").val(), 10);
+	var to = parseInt($("#imgcount_to").val(), 10);
+	
+	$(data).find("photo").each(function(index) {
+		if (i >= to) { return }
+		if (i >= from ) {
+			var imgId = $(this).attr("id");
+			nodes[imgId] = {};
+			fetchURL(imgId);
+			fetchInfo(imgId);
+			
+		}
+		i = i + 1;
+	});
+}
 
 
 
+function fetchImages(url) {
 
-function fetchSet() {
-
-	// create language selections according to select language
-	for (var i in lang.languages) {
-		$('.language_selection').append('<option value="'+i+'">'+lang.languages[i]+'</option');
-	}
+	$("#xml").val('');
+	nodes = [];
 
     var setid = $("#setid").val();
     if ($("#apikey").val() == '') {
@@ -111,51 +232,14 @@ function fetchSet() {
         return;
     }
     apikey =  $("#apikey").val().trim();
-    
-    // remove previous fetch
-    $("#photos").empty();
-    
-    // start query chain
-    var jqxhr = $.get( "https://api.flickr.com/services/rest/?method=flickr.photosets.getInfo&api_key="+apikey+"&photoset_id="+setid, function(data) {
-	    $xml = $(data) 
-	    if ($xml.find("err").length) {
-	        alert($xml.find("err").attr('msg'));
-	        return;
-	    }
-	    var desc = $xml.find("photoset");
-	    $( "#set" ).append( desc.attr("username"));
-	    $( "#set" ).append( $xml.find("description").text());
-	    fetchImages();
-    })
-      .done(function() {
-      })
-      .fail(function() {
-        alert( lang.query_error );
-      })
-      .always(function() {
-      });
-}
 
- 
-
-function fetchImages() {
-
+	var setti = {};
     var i = 0;
     var setid = $("#setid").val();
-    var jqxhr = $.get( "https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos&api_key="+apikey+"&photoset_id="+setid, function(data) {
-	    $(data).find("photo").each(function(index) {
-	        if (i >= $("#imgcount").val()) { return }
-		    $( "#photos" ).append( "<div>"+$(this).text()+"</div>");
-		    //$( "#photos" ).append( $(this).attr("id"));
-		    var cont = $('<table><tr><th>Flickr-data</th><th>Commons-data</th></tr><tr> <td class="info"><div class="div_img"></div><div class="imgurl"></div></td> <td class="xml"></td> </table>');
-		    $("#photos").append(cont);
-		    fetchURL($(this).attr("id"), cont);
-		    fetchInfo($(this).attr("id"), cont);
-		    i = i + 1;
-	    });
-	
+    var jqxhr = $.get( url + apikey, function(data) {	
     })
-      .done(function() {
+      .done(function(data) {
+		 getImageURLs(data);
       })
       .fail(function() {
         alert( lang.query_error  );
@@ -168,101 +252,49 @@ function fetchImages() {
 
 
 
-function fetchURL(photoid, cont) {
+function fetchURL(photoid) {
 
     var jqxhr = $.get( "https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&api_key="+apikey+"&photo_id="+photoid, function(data) {
-	    var d = $(data).find('size[label="Medium"]').attr("source");
-	    var large = $(data).find('size[label="Original"]').attr("source");
-	    cont.find(".div_img").append('<img src="'+d+'" /><br />');
-	    cont.find(".imgurl").val(large);
-
     })
-      .done(function() {
+      .done(function(data) {
+			var d = $(data).find('size[label="Medium"]').attr("source");
+			var large = $(data).find('size[label="Original"]').attr("source");
+			nodes[photoid].imgurl = large;
+			nodes[photoid].thumbnail = d;
       })
       .fail(function() {
         alert( lang.query_error  );
       })
       .always(function() {
       });
+      
 }
-
 
 
 function fetchInfo(photoid, cont) {
 
     var jqxhr = $.get( "https://api.flickr.com/services/rest/?method=flickr.photos.getInfo&api_key="+apikey+"&photo_id="+photoid, function(data) {
+    })
+  .done(function(data) {
 	    $xml = $(data);
 	    var license = $xml.find('photo').attr("license").trim();
 	    if (license != '7' && license != '5' && license != '4') {
-	        cont.find(".info").append("<h2>" + $xml.find('title').text() + "</h2>"); 
-	        cont.find(".xml").append('<div class="license_alert">Non-free license! </div>'); 
+	        //nodes[photoid].append("<h2>" + $xml.find('title').text() + "</h2>"); 
+	        //cont.find(".xml").append('<div class="license_alert">Non-free license! </div>'); 
 	        return;
 	    }
 
-	    cont.find(".info").append("<h2>" + $xml.find('title').text() + "</h2>"); 
-	    cont.find(".info").append("<div>" + licensesPlain[license] + "</div>"); 
-	    cont.find(".info").append( "<div><h3>kuvaus:</h3> " + $xml.find("description").text() + "</div>"); 
+	    nodes[photoid].title = $xml.find('title').text(); 
+	    nodes[photoid].permission = licensesPlain[license];
+	    nodes[photoid].description = $xml.find("description").text(); 
 
-	    cont.find(".info").append( "<div><h3>username:</h3> " + $xml.find("owner").attr("username") + "</div>"); 
-	    cont.find(".info").append( "<div><h3>realname:</h3> " + $xml.find("owner").attr("realname") + "</div>");
-	    cont.find(".info").append( "<div><h3>kuva otettu:</h3> " + $xml.find("dates").attr("taken") + "</div>");
+	    nodes[photoid].username = $xml.find("owner").attr("username");
+	    nodes[photoid].institution = $xml.find("owner").attr("realname"); 
+	    nodes[photoid].date = $xml.find("dates").attr("taken"); 
+	    
+	    nodes[photoid].source = $xml.find("url").text(); 
         
-        // title
-        var title = $xml.find('title').text();
-        insertInput2("#multi_holder","#basic_lang_input", lang.titles, "title", cont.find(".xml"));
-	    cont.find(".title").val(title); 
 
-	    // author
-        insertInput2("#multi_holder","#basic_input", lang.authors, "author", cont.find(".xml"));
-        cont.find(".author").parent().append('<div class="link add_creator">'+lang.add_creator+'</div> | ');
-	    cont.find(".author").parent().append('<div class="link remove_creator">'+lang.remove_creator+'</div> | ');
-	    cont.find(".author").parent().append('<div class="link open_commons">'+lang.search_template+'</div>');
-
-
-	    // description
-	    insertInput2("#multi_textarea_holder","#textarea_input", lang.descriptions, "description", cont.find(".xml"));
-	    cont.find(".description").val($xml.find("description").text()); 
-
-	    // depicted person (photgraph template)
-	    insertInput2("#multi_holder","#basic_input_data_auto", lang.depicted_people, "depictedperson", cont.find(".xml"));
-	    //cont.find(".depictedperson").parent().append('<div class="link add_wikipedia">Lisää Wikimedia-linkki</div>');
-        
-	    // depicted place (photgraph template)
-	    insertInput2("#multi_holder","#basic_input_data_auto", lang.depicted_place, "depictedplace", cont.find(".xml"));
-	    //cont.find(".depictedplace").parent().append('<div class="link add_wikipedia">Lisää Wikimedia-linkki</div>');
-
-	    // date
-	    insertInput2("#basic_holder","#basic_input", lang.date, "date", cont.find(".xml"));
-	    cont.find(".date").val($xml.find("dates").attr("taken"));
-	    cont.find(".date").parent().append('<div class="link remove_time">'+lang.remove_time+'</div> | ');
-	    cont.find(".date").parent().append('<div class="link leave_year">'+lang.leave_year+'</div>');
-	
-	    // keeper
-	    insertInput2("#basic_holder","#basic_input", lang.keeper, "keeper", cont.find(".xml"));
-	    cont.find(".keeper").val($xml.find("owner").attr("realname"));
-	    cont.find(".keeper").parent().append('<div class="link add_institution">'+lang.add_institution+'</div> | ');
-	    cont.find(".keeper").parent().append('<div class="link remove_institution">'+lang.remove_institution+'</div> | ');
-	    cont.find(".keeper").parent().append('<div class="link open_commons">etsi mallinetta</div>');
-
-        // source
-        insertInput2("#multi_holder","#basic_input", lang.source_url, "source", cont.find(".xml"));
-        cont.find(".source").val($xml.find("url").text()); 
-
-        // accession number
-        insertInput2("#multi_holder","#basic_input", lang.accession_number, "accession_number", cont.find(".xml"));
-	     
-
-	    // license
-	    insertInput2("#basic_holder","#basic_input", lang.rights, "license", cont.find(".xml"));
-	    cont.find(".license").val(licenses[license]);
-	    cont.find(".license").attr('readonly', 'readonly');
-
-        // preview
-        cont.find(".xml").append('<div class="holder"><div class="divtitle">Preview </div><div class="frame div_preview"> </div></div>');
-        cont.find(".div_preview").append('<div class="link preview">Preview in a new window</div>');
-    })
-  .done(function() {
-        addEvents(cont);
     })
   .fail(function() {
         alert( lang_query_error );
@@ -271,15 +303,7 @@ function fetchInfo(photoid, cont) {
   });
 }
 
-function insertInput2(holderName, inputName, divTitle, inputTitle, cont) {
-	var d = $(holderName).first().clone();
-	d.find(".input_holder").append($(inputName).first().clone());
-	d.find(".div_title").text(divTitle);
-	d.find(".input_title").text(inputTitle+':');
-	addAutocomplete(d.find(".autocomplete"));
-	d.find(".rename_me").addClass(inputTitle);
-	cont.append(d);
-} 
+
 
 
 function addEvents(cont) {
@@ -305,11 +329,29 @@ function addEvents(cont) {
         var d = $(this).parent().find(".input_holder").first().clone();
         d.find("input").val("");
         d.find("input").attr('id',newid);
+        d.find("select")[0].selectedIndex = -1;	// TODO: fix this ugly thing
+        //d.find("select option:selected").removeProp('selected');
         addAutocomplete(d.find("input.autocomplete"));
         var holder = $(this).parent().find(".frame");
         holder.append(d);
         addEvents(d);
     });
+
+
+    cont.find( ".autocomplete" ).each(function(){
+
+        addAutocomplete($(this));
+
+    });
+
+    cont.find( ".language_selection" ).on( "change", function(e) {
+		var val = $(this).val();
+		var attr = $(this).siblings().last().attr('name');
+		attr = attr.replace(/_(..)$/,'') 	// remove old language
+		attr = attr + '_' + $(this).val();	// add new
+        $(this).siblings().last().attr('name',attr);
+        $(this).siblings().last().attr('class',attr);
+    })
 
     cont.find( ".add_creator" ).on( "click", function(e) {
         var field = $( this ).parent().find("input");
@@ -446,80 +488,75 @@ function leaveYear(date) {
 
 function searchAndReplace(etsi, korvaa) {
 
-    var searchText = $("#searchText").val();
-    var replaceText = $("#replaceText").val();
-    var field = $("#fieldSelect").val();
-    $("#photos").find('.'+field).each(function() {
-        var text = $(this).val();
-        $(this).val(text.replace(searchText, replaceText)); 
-    });
+	var searchText = $("#searchText").val();
+	var replaceText = $("#replaceText").val();
+	var field = $("#fieldSelect").val();
+
+	if($("#overwrite").is(':checked')) {
+		$("#photos").find('.'+field).each(function() {
+			$(this).val(replaceText); 
+		});		
+	} else {
+		$("#photos").find('.'+field).each(function() {
+			var text = $(this).val();
+			$(this).val(text.replace(searchText, replaceText)); 
+		});
+	}
 
 }
-
-
 
 function convertSet() {
+	
+	var file_id = $('#file_id').text();
+	var version = $('#version').text();
+	version = parseInt(version) + 1;
+	
     var xml = "<set>\n";
-    
-    $('.xml').each(function() {
-        xml += "  <record>\n";
-        
-        // titles
-        $(this).find('.title').each(function() {
-            var lang = $(this).siblings("select").val();
-            if ($(this).val().trim() != '') 
-                xml += '    <title lang="'+lang+'">' + $(this).val() + '</title>\n';
-        });
-        // authors
-        $(this).find('.author').each(function() {
-            if ($(this).val().trim() != '') 
-                xml += "    <author>" + $(this).val() + "</author>\n";
-        });
-        
-        // descriptions
-        $(this).find('.description').each(function() {
-            var lang = $(this).siblings("select").val();
-            if ($(this).val().trim() != '') 
-                xml += '    <description lang="'+lang+'">' + $(this).val() + '</description>\n';
-        });
+	
+	$('.xml').each(function() {
+		
+		if ($(this).parents("tr").find(".enabled").prop('checked')) {
+			xml += "  <record>\n";
+		
+			// loop all inputs
+			$(this).find('input[type=text]').each(function() {
+				
+				var lang = $(this).siblings("select").val();
+				var field = $(this).attr('name')
+				field = field.replace(/_(..)$/,'') // remove language part (eg. title_en))
+				
+				if (lang != undefined) {
+					xml += '    <'+field+' lang="'+lang+'">' + $(this).val().replace('&', '&amp;') + '</'+field+'>\n';				
+				} else {
+					xml += '    <'+field+'>' + $(this).val().replace('&', '&amp;') + '</'+field+'>\n';
+				}
+				
+			});
 
-        
-        // depicted persons
-        $(this).find('.depictedperson').each(function() {
-            if ($(this).val().trim() != '')
-                xml += "    <depicted_person>" + $(this).val() + "</depicted_person>\n";
-        });
+			// description is a textarea
+			$(this).find('textarea').each(function() {
+				var lang = $(this).siblings("select").val();
+				var field = $(this).attr('name')
+				field = field.replace(/_(..)$/,'') // remove language part (eg. title_en))
+				xml += '    <'+field+' lang="'+lang+'">' + $(this).val().replace('&', '&amp;') + '</'+field+'>\n';
+			});
+		
+			// image link
+			$(this).siblings('.info').find('img').each(function() {
+				var field = $(this).attr('name')
+				xml += '    <thumbnail>' + $(this).attr("src").replace('&', '&amp;') + '</thumbnail>\n';
+			});
 
-        // depicted places
-        $(this).find('.depictedplace').each(function() {
-            if ($(this).val().trim() != '')
-                xml += "    <depicted_place>" + $(this).val() + "</depicted_place>\n";
-        });
-
-        // source
-        $(this).find('.source').each(function() {
-            if ($(this).val().trim() != '')
-                xml += "    <source>" + $(this).val() + "</source>\n";
-        });
-
-        // accession numbers
-        $(this).find('.accession_number').each(function() {
-            if ($(this).val().trim() != '')
-                xml += "    <accession_number>" + $(this).val() + "</accession_number>\n";
-        });
-
-        xml += "    <keeper>" + $(this).find('.keeper').val() + "</keeper>\n";
-        xml += "    <date>" + $(this).find('.date').val() + "</date>\n";
-        xml += "    <permissions>" + $(this).find('.license').val() + "</permissions>\n";
-
-        var imgurl = $(this).parents('table').find('.imgurl').val();
-        xml += "    <imgurl>"+imgurl+"</imgurl>\n";
-        xml += "  </record>\n";
-        
-    });
-    xml += "</set>";
-    $("#xmlout").val(xml); 
+			xml += "  </record>\n";
+		}
+		
+	});
+	
+	xml += "</set>";
+	
+	$("#xmlout").val(xml); 
 }
+
 
 
 
@@ -550,16 +587,237 @@ function convertSet2WIKI(cont) {
 
         xml += "    |institution = " + $(this).find('.keeper').val() + "\n";
         xml += "    |date = " + $(this).find('.date').val() + "\n";
-        //alert($(this).parent().get( 0 ).tagName);
-        //var imgurl = $(this).parent('.tdurl').find('.imgurl')[0].val();
-        //imgurl.replace("_s.jpg", "_c.jpg");
-        //xml += "    <imgurl>https://farm4.staticflickr.com/3847/14148746009_0426de2b11_c.jpg</imgurl>\n";
+        xml += "    |source = " + $(this).find('.source').val() + "\n";
         xml += "}}";
         
     });
     
     $("#xmlout").val(encodeURIComponent(xml)); 
     return encodeURIComponent(xml);
+}
+
+
+function generateTitles() {
+
+	var inputs = [];
+	var prefixes = [];
+	var postfixes = [];
+
+	prefix = $("#file_title_prefix").val();
+	postfix = $("#file_title_postfix").val();
+	separator = $("#file_title1_default_sep").val();
+	
+	inputs.push($("#file_title1").val());
+	inputs.push($("#file_title2").val());
+	inputs.push($("#file_title3").val());
+
+	prefixes.push($("#file_title1_prefix").val());
+	prefixes.push($("#file_title2_prefix").val());
+	prefixes.push($("#file_title3_prefix").val());
+
+	postfixes.push($("#file_title1_postfix").val());
+	postfixes.push($("#file_title2_postfix").val());
+	postfixes.push($("#file_title3_postfix").val());
+
+    $('.xml').each(function() {
+		
+		var output = [];
+	
+		for (i=0; i < inputs.length; i++) {
+			var inputValues = [];
+			$(this).find('.' + inputs[i]).each(function() {
+				if ($(this).val().trim() != '') {
+					// trim out curly braces and so on
+					// dates
+					var inputVal = $(this).val().trim();
+					inputVal = inputVal.replace("{{other date|s|","");
+					inputVal = inputVal.replace("}}","");
+					inputValues.push(inputVal);
+				}
+				
+			});
+			
+			if (inputValues.length > 0) {
+				var intermed = prefixes[i] + inputValues.join(', ') + postfixes[i];
+				output.push(intermed);
+
+			}
+		};
+		//output.push(postfix);
+		var out = prefix + output.join(separator) + postfix;
+		$(this).find(".commons_title").val(out);
+	
+	});
+}
+
+function transform() {
+
+	var template = $("#template_sel").val();
+
+    var xsl = Saxon.requestXML("xsl/"+template+".xslt");
+    var xml = Saxon.parseXML($("#xml").val());
+    var proc = Saxon.newXSLT20Processor(xsl); 
+
+    // set default language for text fields
+    proc.setParameter(null, "def_lang", ui_lang);
+
+    var x = proc.transformToFragment(xml,document);
+    $("#photos").empty();
+    $("#photos").append(x);
+    
+    $('.xml').each(function() {
+		addEvents($(this));
+	});
+    
+}
+
+
+
+
+function regexTest() {
+	var regexp = new RegExp($("#regex").val());
+	var r = $("#regex").val();
+	var source = $("#regex_source").val();
+	$("#inspect_area").empty()
+	
+	$('.xml').each(function() {
+			var sourceText = $(this).find("." + source).val();
+			var findings = sourceText.match(regexp);
+
+			console.log('-- regexp ----- ' + r)
+			console.log(findings)
+			if(findings) {
+				// set value
+				$("#inspect_area").append($('<div>' + findings[0] + '</div>'));
+		}
+	});
+}
+
+function regexSet() {
+	var regexp = new RegExp($("#regex").val());
+	var r = $("#regex").val();
+	var source = $("#regex_source").val();
+	var target = $("#regex_target").val();
+	
+	$('.xml').each(function() {
+			var sourceText = $(this).find("." + source).val();
+			var findings = sourceText.match(regexp);
+
+			console.log('-- regexp ----- ' + r)
+			console.log(findings)
+			if(findings) {
+
+				if ($("#regex_move").is(':checked')) {
+					var replaced = sourceText.replace(findings[0], '');
+					$(this).find("." + source).first().val(replaced.trim()); 
+				}				
+
+				if ($("#regex_add_field").is(':checked')) {
+					var d = addInputField($(this).find("." + target).first());
+					
+					// set language of the new field
+					var lang = $("#regex_new_lang").val();
+					d.find('.language_selection').val(lang);
+					
+					// set value
+					d.find('input, textarea').last().val(findings[0]);
+					// move
+					if ($("#regex_move").is(':checked')) {
+						var replaced = sourceText.replace(findings[0], '');
+						
+						$(this).find("." + source).first().val(replaced.trim()); 
+					}
+				} else {
+				
+					if ($("#regex_append").is(':checked')) {
+						var curr = $(this).find("." + target).val();
+						$(this).find("." + target).val(curr + findings[0]);	
+					} else {
+						$(this).find("." + target).val(findings[0]);	
+					}
+				}
+			}
+			
+	});
+}
+
+
+
+function addInputField(cont) {
+
+	// clone first element in "input_holder"
+	var newid = "cloned_" + (cloneCount++); // Generates a unique id
+	var d = $(cont).parents(".input_holder").first().clone();
+	d.find("input, textarea").val("");
+	d.find("input").attr('id',newid);
+	addAutocomplete(d.find("input.autocomplete"));
+	var holder = $(cont).parents(".frame");
+	holder.append(d);
+	//addEvents(d);
+	return d;
+        
+}
+
+
+function tokenFind() {
+
+	var r = $("#search_start").val();
+	
+}
+
+
+function allSetLang () {
+
+	var field = $("#all_def_lang").val();
+	var defLang = $("#all_def_lang_sel").val();
+	$('.'+field).each(function() {
+		 $(this).siblings("select").val(defLang);
+	});
+	
+}
+
+
+function allSetStartEnd() {
+
+	var field = $("#all_start_end_field").val();
+	var start = $("#all_start").val();
+	var end = $("#all_end").val();
+	
+	$('.'+field).each(function() {
+		var val = $(this).val();
+		val = start + val + end;
+		$(this).val(val);
+		
+	});
+	
+}
+
+// TODO: allows only one match
+function allKeyVal() {
+	
+	var field = $("#keyval_source").val();
+	var key = $("#keyval").val();
+	var target = $("#keyval_target").val();
+	
+	$('.'+field).each(function() {
+		var val = $(this).val();
+		//val = start + val + end;
+		//$(this).val(val);
+		var lines = val.split("\n");
+		for (i=0; i < lines.length; i++) {
+			var match = lines[i].search(key);
+			if (match != -1) {
+				var pair = lines[i].substring(match + key.length, lines[i].length);
+				$(this).parents(".xml").find('.'+target).val(pair.trim());
+				console.log(pair);
+				return;
+			}
+		}
+		
+		console.log(target);
+		
+	});
+	
 }
 
 
@@ -575,3 +833,58 @@ function listItems (cont, selectorClass, templateProperty) {
     else 
         return '';
 }
+
+
+//Get querystring request paramter in javascript
+function getParameter (parameterName ) {
+
+   var queryString = window.top.location.search.substring(1);
+
+   // Add "=" to the parameter name (i.e. parameterName=value)
+   var parameterName = parameterName + "=";
+   if ( queryString.length > 0 ) {
+      // Find the beginning of the string
+      begin = queryString.indexOf ( parameterName );
+      // If the parameter name is not found, skip it, otherwise return the value
+      if ( begin != -1 ) {
+         // Add the length (integer) to the beginning
+         begin += parameterName.length;
+         // Multiple parameters are separated by the "&" sign
+         end = queryString.indexOf ( "&" , begin );
+      if ( end == -1 ) {
+         end = queryString.length
+      }
+      // Return the string
+      return unescape ( queryString.substring ( begin, end ) );
+   }
+   // Return "null" if no parameter has been found
+   return null;
+   }
+}
+
+
+
+
+
+$( document ).ajaxStop(function() {
+
+	var xml = '<set>\n';
+	var keys = Object.keys(nodes);
+
+	for (i=0; i < keys.length ; i++) {
+		xml += '  <record>\n';
+		console.log(nodes[keys[i]].imgurl);
+		var imgKeys = Object.keys(nodes[keys[i]])
+		
+		for (j=0; j < imgKeys.length; j++) {
+			xml += '     <' + imgKeys[j] + '>' + nodes[keys[i]][imgKeys[j]]+ '</' + imgKeys[j] + '>\n';
+		}
+		xml += '  </record>\n';			
+	}
+	
+	xml += '</set>\n';
+	$("#xml").val(xml);
+	//transform();
+	
+
+});

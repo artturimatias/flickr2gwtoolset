@@ -1,0 +1,8 @@
+<?xml version='1.0'?>
+<select class="language_sel">
+	 <option value="fi">suomeksi</option>
+	 <option value="sv">ruotsiksi</option>
+	 <option value="en">englanniksi</option>
+	 <option value="de">saksaksi</option>
+	 <option value="fr">ranskaksi</option>
+ </select> 

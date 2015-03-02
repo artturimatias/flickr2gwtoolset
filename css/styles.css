@@ -8,6 +8,18 @@ padding: 0;
 color: #112211;
 }
 
+.inspect {
+	margin-bottom:1em;
+}
+
+.shorter {
+	width:2em;
+}
+
+.short {
+	width:6em;
+}
+
 #header a{
 	color: white; 
 }
@@ -34,7 +46,7 @@ textarea {
     height:10em;
 }
 
-#photos input {
+.xml input {
     width:100%;
 }
 
