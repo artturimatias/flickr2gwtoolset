@@ -412,8 +412,9 @@
 </xsl:template>
 
 
-
-
+<!-- ******************************************  -->
+<!-- translatable fields (title and description) -->
+<!-- ******************************************  -->
 
 <xsl:template match="title">
 	
@@ -447,6 +448,59 @@
 
 </xsl:template>
 
+
+<xsl:template match="description">
+
+		<div class="input_holder">
+			<div id="basic_lang_input">
+				<div>
+					<div class="input_title">description:</div> 
+					
+					<xsl:choose>
+						<xsl:when test="./@lang">
+					
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="./@lang" />
+								</xsl:with-param>
+							</xsl:call-template>
+								
+							<textarea class="description_{./@lang}" name="description_{./@lang}" >
+								<xsl:choose>
+									<xsl:when test=". != ''">
+										<xsl:value-of select="."></xsl:value-of>
+									</xsl:when> 
+									<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
+								</xsl:choose>
+							</textarea>
+							
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="$def_lang" />
+								</xsl:with-param>
+							</xsl:call-template>	
+							<textarea class="description_{$def_lang}" name="description_{$def_lang}" >
+								<xsl:choose>
+									<xsl:when test=". != ''">
+										<xsl:value-of select="."></xsl:value-of>
+									</xsl:when> 
+									<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
+								</xsl:choose>
+							</textarea>						
+						</xsl:otherwise>
+					</xsl:choose>
+				</div>
+			</div>
+		</div>
+
+</xsl:template>
+
+
+<!-- ******************************************  -->
+<!-- basic fields -->
+<!-- ******************************************  -->
 
 
 
@@ -537,32 +591,6 @@
 
 
 
-<xsl:template match="description">
-
-		<div class="input_holder">
-			<div id="basic_lang_input">
-				<div>
-					<div class="input_title">description:</div> 
-					
-					<xsl:call-template name="lang_set" >
-						<xsl:with-param name="lang">
-							<xsl:value-of select="./@lang" />
-						</xsl:with-param>
-					</xsl:call-template>
-						
-					<textarea class="description_{./@lang}" name="description_{./@lang}" >
-						<xsl:choose>
-							<xsl:when test=". != ''">
-								<xsl:value-of select="."></xsl:value-of>
-							</xsl:when> 
-							<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
-						</xsl:choose>
-					</textarea>
-				</div>
-			</div>
-		</div>
-
-</xsl:template>
 
 
 
