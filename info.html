@@ -1,0 +1,79 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="css/styles.css" />
+<script type="text/javascript" src="jquery-2.1.1.min.js"></script>
+<title>Flickr2GWToolset</title>
+</head>
+ 
+<body >
+	<div id="wrap">
+		<div id="header">
+		   <a style="display:block" target="_blank" href="http://fi.wikimedia.org/">
+		        <img src="../150px-WMFI.png" align="right"/>
+		    </a>
+		    
+		    <div class="headertext">
+			    <h1>Flickr2GWToolset</h1>
+			    <h2>BY: <a target="_blank" href="http://www.opendimension.org">Ari Häyrinen</a></h2>
+			</div>
+
+		</div>
+		<div id="sidebar"> </div> 
+		<div id="content">
+		<h2>What is it?</h2>
+		Flickr2GWToolset is a simple web application for editing metadata of Flickr images <b>before</b> uploading them to Wikimedia Commons via GWToolset. 
+
+		<h2> Some notes</h2>
+		<ul>
+		    <li>Flickr2GWToolset <b>does not save or edit anything</b>. It just outpus a XML file to a textarea.</li>
+	        <ul>
+	            <li>However, you *can* save XML to your computer and then feed it back and continue editing.</li>
+	        </ul>
+		    <li>You can fetch data from Flickr albums or photostreams. </li>
+		    <li>Flickr2GWToolset uses a Photograph template for Commons uploads.</li>
+		    <li>Can be run locally (just download source and open it in a browser)</li>
+		    <li>Source in github is not up to date!</li>
+		</ul>
+
+		<h2>Features</h2>
+		<ul>
+		    
+		    <li>Wikidata lookup for some fields</li>
+		    <li>Add depicted people and depicted places</li>
+		    <li>Add languages version for titles and descriptions</li>
+		    <li>Mass-editing tools:</li>
+		    <ul>
+		        <li>Replace&search</li>
+		        <li>Date manipulation for old photographs (remove hours, minutes and seconds or leave only year) </li>
+		        <li>Create commons file name by combining fields.</li>
+		        <li>Pick key-value pairs from fields</li>
+		        <li>Regular expressions for advanced matching</li>
+		        <li>Hand-select images from the set</li>
+		    </ul>
+		
+		</ul>
+
+		<h2>Demo</h2>
+		<p>
+            You can find demo <a target="_blank" href="index.html">here</a>. Sample XML to play with <a href="aalto_university_library.xml">here</a> (download, open in text editor, copy to the "Your XML" textarea in Flickr2GWToolset and press "Edit with...").
+		</p>
+		<p>In order to fetch data from Flickr, you need a Flickr-API key</p>
+		
+		<h2>Source (is *NOT* up to date)</h2>
+            <p>
+            You can find source here: <a target="_blank" href="https://github.com/artturimatias/flickr2gwtoolset">hhttps://github.com/artturimatias/flickr2gwtoolset</a>
+            </p>
+        <h2>Contact</h2>
+        <p>
+            ari.hayrinen@gmail.com
+        </p>
+        </div>
+    </div>
+ 
+
+
+
+
+</body>
+</html>

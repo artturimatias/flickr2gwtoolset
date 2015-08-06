@@ -9,7 +9,7 @@
 	<xsl:value-of select="document('languages.xml')"/>
 
 </xsl:variable>	
-
+<xsl:param name="def_lang"></xsl:param>
 
 
 <xsl:template match="/">
@@ -33,25 +33,21 @@
 			<h3>
 				<xsl:value-of select=".//title"/>
 			</h3>
-			<xsl:apply-templates select=".//thumbnail"/>	
+			<xsl:apply-templates select=".//thumbnail"/>
+			<div>
+				<input class="enabled" type="checkbox" checked="checked"/> Include photo
+			</div>
+			<div>	
+				<b>description:</b><xsl:value-of select=".//description"/>
+			</div>
+			<div>
+				<b>date:</b><xsl:value-of select=".//date"/>
+			</div>
 
         </td>
 		<td class="xml">
 			
 			
-			
-			
-			<!-- titles -->
-			<div class="holder">
-				<div class="div_title">Otsikot</div>
-				<div class="link addinput">+</div>
-				<div class="frame">
-			
-					<xsl:apply-templates select=".//title"/>
-
-					
-				</div>
-			</div>
 
 			<!-- commons_title -->
 			<div class="holder">
@@ -71,24 +67,77 @@
 				
 				</div>
 			</div>
+			
+			<!-- titles -->
+			<div class="holder">
+				<div class="div_title">Titles</div>
+				<div class="link addinput">+</div>
+				<div class="frame">
+			
+					<xsl:apply-templates select=".//title"/>
+
+				</div>
+			</div>
+
 
 			<!-- description -->
 			<div class="holder">
-				<div class="div_title">Kuvailu</div>
+				<div class="div_title">Descriptions</div>
 				<div class="link addinput">+</div>
 				<div class="frame">
 			
 					<xsl:apply-templates select=".//description" />
-			
+					
+					
+				</div>
+			</div>
+
+			<!-- description -->
+			<div class="holder">
+				<div class="div_title">Basic information</div>
+				<div class="frame">
+
+					<xsl:choose>
+						<xsl:when test=".//author">
+							<xsl:apply-templates select=".//author"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">author</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+
+					<xsl:choose>
+						<xsl:when test=".//date">
+							<xsl:apply-templates select=".//date"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">date</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					
 				</div>
 			</div>
 
 
 			<!-- location -->
 			<div class="holder">
-				<div class="div_title">Mitä paikkaa kartta esittää?</div>
-				<div class="link addinput">+</div>
+				<div class="div_title">Geotemporal data</div>
 				<div class="frame">
+					
+					<xsl:choose>
+						<xsl:when test=".//map_date">
+							<xsl:apply-templates select=".//map_date"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">map_date</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
 					
 					<xsl:choose>
 						<xsl:when test=".//location">
@@ -101,15 +150,11 @@
 						</xsl:otherwise>
 					</xsl:choose>
 				
-				</div>
-			</div>
 
 
-			<!-- wikidata location -->
-			<div class="holder">
-				<div class="div_title">Mitä paikkaa kartta esittää (wikidata-linkki)?</div>
-				<div class="link addinput">+</div>
-				<div class="frame">
+
+
+
 					<xsl:choose>
 						<xsl:when test=".//wikidata_location">
 							<xsl:apply-templates select=".//wikidata_location"/>
@@ -120,60 +165,103 @@
 							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
+
+
+
+
+
+					<xsl:choose>
+						<xsl:when test=".//projection">
+							<xsl:apply-templates select=".//projection"/>
+						</xsl:when>
+						<xsl:otherwise>			
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">projection</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+
+
+
+
+					<xsl:choose>
+						<xsl:when test=".//scale">
+							<xsl:apply-templates select=".//scale"/>
+						</xsl:when>
+						<xsl:otherwise>			
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">scale</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+
+
+
+					<xsl:choose>
+						<xsl:when test=".//heading">
+							<xsl:apply-templates select=".//heading"/>
+						</xsl:when>
+						<xsl:otherwise>			
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">heading</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+
+
+					<xsl:choose>
+						<xsl:when test=".//latitude">
+							<xsl:apply-templates select=".//latitude"/>
+						</xsl:when>
+						<xsl:otherwise>			
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">latitude</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					
+					<xsl:choose>
+						<xsl:when test=".//longitude">
+							<xsl:apply-templates select=".//longitude"/>
+						</xsl:when>
+						<xsl:otherwise>			
+							<xsl:call-template name="empty_input" >
+								<xsl:with-param name="titleName">longitude</xsl:with-param>
+							</xsl:call-template>
+						</xsl:otherwise>
+					</xsl:choose>
+					
+					
 				</div>
 			</div>
 
 
-			
 			<!-- date -->
 			<div class="holder">
-				<div class="div_title">Milloin kartta on tehty?</div>
-				<div class="link addinput">+</div>
+				<div class="div_title"> Bibliographic data</div>
 				<div class="frame">
 					
 					<xsl:choose>
-						<xsl:when test=".//date">
-							<xsl:apply-templates select=".//date"/>
+						<xsl:when test=".//set">
+							<xsl:apply-templates select=".//set"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:call-template name="empty_input" >
-								<xsl:with-param name="titleName">date</xsl:with-param>
+								<xsl:with-param name="titleName">set</xsl:with-param>
 							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
-				
-				</div>
-			</div>
 
-
-
-			<!-- author-->
-			<div class="holder">
-				<div class="div_title">Kuka kartan on tehnyt?</div>
-				<div class="link addinput">+</div>
-				<div class="frame">
-					
 					<xsl:choose>
-						<xsl:when test=".//author">
-							<xsl:apply-templates select=".//author"/>
+						<xsl:when test=".//sheet">
+							<xsl:apply-templates select=".//sheet"/>
 						</xsl:when>
 						<xsl:otherwise>
 							<xsl:call-template name="empty_input" >
-								<xsl:with-param name="titleName">author</xsl:with-param>
+								<xsl:with-param name="titleName">sheet</xsl:with-param>
 							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
-			
-				</div>
-			</div>
-			
-
-
-			<!-- publisher-->
-			<div class="holder">
-				<div class="div_title">Julkaisija</div>
-				<div class="link addinput">+</div>
-				<div class="frame">
 					
 					<xsl:choose>
 						<xsl:when test=".//publisher">
@@ -192,8 +280,7 @@
 
 			<!-- institution-->
 			<div class="holder">
-				<div class="div_title">Arkistoija</div>
-				<div class="link addinput">+</div>
+				<div class="div_title">Archival data</div>
 				<div class="frame">
 					<xsl:choose>
 						<xsl:when test=".//institution">
@@ -205,13 +292,7 @@
 							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
-				</div>
-			</div>
 
-			<!-- identifiers (uri) -->
-			<div class="holder">
-				<div class="div_title">Tunniste</div>
-				<div class="frame">
 					<xsl:choose>
 						<xsl:when test=".//accession_number">
 							<xsl:apply-templates select=".//accession_number"/>
@@ -253,52 +334,10 @@
 				</div>
 			</div>	
 
+			
 
-			<!-- commons category -->
-			<div class="holder">
-				<div class="div_title">Commons kategoriat</div>
-				<div class="link addinput">+</div>
-				<div class="frame">
-					<xsl:choose>
-						<xsl:when test=".//category">
-							<xsl:apply-templates select=".//category"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:call-template name="empty_input" >
-								<xsl:with-param name="titleName">category</xsl:with-param>
-							</xsl:call-template>
-						</xsl:otherwise>
-					</xsl:choose>
-				</div>
-			</div>
 			
-			<!--
-			<xsl:choose>
-				<xsl:when test="/html/body">body node exists</xsl:when>
-				<xsl:otherwise>body node missing</xsl:otherwise>
-			</xsl:choose>
-			-->
-			
-			<!-- commons URL -->
-			<div class="holder">
-				<div class="div_title">COMMONS linkki (talletettu)</div>
-				<div class="frame">
-					
-					<xsl:choose>
-						<xsl:when test=".//commons_url">
-							<xsl:apply-templates select=".//commons_url"/>
-						</xsl:when>
-						<xsl:otherwise>
-							<xsl:call-template name="empty_input" >
-								<xsl:with-param name="titleName">commons_url</xsl:with-param>
-							</xsl:call-template>
-						</xsl:otherwise>
-					</xsl:choose>
-					
-				</div>
-			</div>	
-			
-			<!-- <div class="button wikicode">Wiki code</div> -->
+			 <a href="#" class="button preview">preview</a> 
 			<!-- <div class="button xml_export">XML</div> -->
 			<!-- <button type="button" class="save2commons">Save to Commons!</button> -->
 		</td>
@@ -307,12 +346,95 @@
 </xsl:template>
 
 
+<!-- ******************************************  -->
+<!-- translatable fields (title and description) -->
+<!-- ******************************************  -->
 
+<xsl:template match="title">
+	
+			<div class="input_holder">
+				<div id="basic_lang_input">
+					<div>
+						<div class="input_title">title:</div> 
+					
+
+					<xsl:choose>
+						<xsl:when test="./@lang">
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="./@lang" />
+								</xsl:with-param>
+							</xsl:call-template>
+							<input class="title_{./@lang}" name="title_{./@lang}" type="text" value="{.}"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="$def_lang" />
+								</xsl:with-param>
+							</xsl:call-template>
+							<input class="title_{$def_lang}" name="title_{$def_lang}" type="text" value="{.}"/>
+						</xsl:otherwise>
+					</xsl:choose>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+<xsl:template match="description">
+
+		<div class="input_holder">
+			<div id="basic_lang_input">
+				<div>
+					<div class="input_title">description:</div> 
+					
+					<xsl:choose>
+						<xsl:when test="./@lang">
+					
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="./@lang" />
+								</xsl:with-param>
+							</xsl:call-template>
+								
+							<textarea class="description_{./@lang}" name="description_{./@lang}" >
+								<xsl:choose>
+									<xsl:when test=". != ''">
+										<xsl:value-of select="."></xsl:value-of>
+									</xsl:when> 
+									<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
+								</xsl:choose>
+							</textarea>
+							
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:call-template name="lang_set" >
+								<xsl:with-param name="lang">
+									<xsl:value-of select="$def_lang" />
+								</xsl:with-param>
+							</xsl:call-template>	
+							<textarea class="description_{$def_lang}" name="description_{$def_lang}" >
+								<xsl:choose>
+									<xsl:when test=". != ''">
+										<xsl:value-of select="."></xsl:value-of>
+									</xsl:when> 
+									<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
+								</xsl:choose>
+							</textarea>						
+						</xsl:otherwise>
+					</xsl:choose>
+				</div>
+			</div>
+		</div>
+
+</xsl:template>
 
 <!-- read languages from XML and set selected language -->
 <xsl:template name="lang_set">
 	<xsl:param name="lang" />
-	<select>
+	<select class="language_selection">
 		<xsl:for-each select="document('languages.xml')//option">
 				
 			<xsl:choose>
@@ -370,21 +492,13 @@
 
 
 
+<xsl:template match="commons_title">
 
-<xsl:template match="title">
-	
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
-						<div class="input_title">title:</div> 
-						
-						<xsl:call-template name="lang_set" >
-							<xsl:with-param name="lang">
-								<xsl:value-of select="./@lang" />
-							</xsl:with-param>
-						</xsl:call-template>
-						
-						<input class="title" name="title" type="text" value="{.}"/>
+						<div class="input_title">commons_title:</div> 
+						<input class="commons_title" name="commons_title" type="text" value="{.}"/>
 					</div>
 				</div>
 			</div>
@@ -392,27 +506,6 @@
 </xsl:template>
 
 
-
-
-<xsl:template match="title[@qualifier='alternative']">
-
-			<div class="input_holder">
-				<div id="basic_lang_input">
-					<div>
-						<div class="input_title">vaihtoentoinen otsikko:</div> 
-						
-						<xsl:call-template name="lang_set" >
-							<xsl:with-param name="lang">
-								<xsl:value-of select="./@lang" />
-							</xsl:with-param>
-						</xsl:call-template>
-						
-						<input class="title" name="title" type="text" value="{.}"/>
-					</div>
-				</div>
-			</div>
-
-</xsl:template>
 
 
 
@@ -447,6 +540,18 @@
 </xsl:template>
 
 
+<xsl:template match="location">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">location:</div> 
+						<input class="location" name="location" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
 
 <xsl:template match="permission">
 
@@ -458,35 +563,6 @@
 					</div>
 				</div>
 			</div>
-
-</xsl:template>
-
-
-
-<xsl:template match="description">
-
-		<div class="input_holder">
-			<div id="basic_lang_input">
-				<div>
-					<div class="input_title">description:</div> 
-					
-					<xsl:call-template name="lang_set" >
-						<xsl:with-param name="lang">
-							<xsl:value-of select="./@lang" />
-						</xsl:with-param>
-					</xsl:call-template>
-						
-					<textarea class="description" name="description" >
-						<xsl:choose>
-							<xsl:when test=". != ''">
-								<xsl:value-of select="."></xsl:value-of>
-							</xsl:when> 
-							<xsl:otherwise>&#160;</xsl:otherwise> <!-- without space textarea collapses -->
-						</xsl:choose>
-					</textarea>
-				</div>
-			</div>
-		</div>
 
 </xsl:template>
 
@@ -554,7 +630,106 @@
 </xsl:template>
 
 
+<xsl:template match="projection">
 
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">projection:</div> 
+						<input class="projection" name="projection" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+<xsl:template match="heading">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">heading:</div> 
+						<input class="heading" name="heading" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+<xsl:template match="scale">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">scale:</div> 
+						<input class="scale" name="scale" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+<xsl:template match="latitude">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">latitude:</div> 
+						<input class="latitude" name="latitude" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+
+<xsl:template match="longitude">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">longitude:</div> 
+						<input class="longitude" name="longitude" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+
+<xsl:template match="record/set">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">set:</div> 
+						<input class="set" name="set" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+
+
+<xsl:template match="sheet">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">sheet:</div> 
+						<input class="sheet" name="sheet" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
 
 <xsl:template match="category">
 	
@@ -593,12 +768,13 @@
 				<div id="basic_input">
 					<div>
 						<div class="input_title">publisher:</div> 
-						<input name="publisher" class="rename_me publisher" type="text" value="{.}"/>
+						<input name="publisher" class="publisher" type="text" value="{.}"/>
 					</div>
 				</div>
 			</div>
   
 </xsl:template>
+
 
 
 
@@ -611,12 +787,45 @@
 				<div>
 					<div class="input_title">date:</div> 
 					<input class="date" name="date" type="text" value="{.}" />
-				<div class="link remove_time">Poista tunnit, minuutit ja sekunnit</div> | <div class="link leave_year">Jätä vain vuosi</div></div>
+					date precision: <select class="other_date_select">
+						<option name="no_other_date">no other date</option>
+						<option name="after">after</option>
+						<option name="before">before</option>
+						<option name="circa">circa</option>
+						<option name="decade">decade (1960's)</option>
+						<option name="century">century (19th)</option>
+						<option class="select-dash" disabled="disabled">----range----</option>
+
+					</select>
+				</div>
 			</div>
 		</div>
    
 </xsl:template>
 
+
+<xsl:template match="map_date">
+	
+		<div class="input_holder">
+			<div id="basic_input">
+				<div>
+					<div class="input_title">date:</div> 
+					<input class="map_date" name="map_date" type="text" value="{.}" />
+					date precision: <select class="other_date_select">
+						<option name="no_other_date">no other date</option>
+						<option name="after">after</option>
+						<option name="before">before</option>
+						<option name="circa">circa</option>
+						<option name="decade">decade (1960's)</option>
+						<option name="century">century (19th)</option>
+						<option class="select-dash" disabled="disabled">----range----</option>
+
+					</select>
+				</div>
+			</div>
+		</div>
+   
+</xsl:template>
 
 <xsl:template match="imgurl">
 	

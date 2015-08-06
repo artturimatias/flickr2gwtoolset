@@ -19,6 +19,9 @@ var xml 			= '';
 var nodes 			= [];
 var fields 			= ['accession_number', 'date','depicted_people','depicted_place', 'commons_title','institution','photographer']
 var fields_lang     = ['description_fi','description_en','description_sv', 'title_fi','title_en','title_sv' ]
+var fields_map 			= ['author','accession_number', 'date', 'commons_title','institution']
+var templateName = "Photograph";
+
 var ixml;
 
 //onSaxonLoad = function() { 
@@ -64,18 +67,6 @@ $(document).ready(function(){
       //.always(function() {
       //});
 
-
-
-	// generate field select options for tools
-	$('#tools').find('select').not('#all_def_lang, #all_def_lang_sel, #add_link_pedia, #add_link_pedia_lang').each(function() {
-		for (i=0; i < fields.length; i++) {
-			$(this).append('<option>'+fields[i]+'</option>');
-		}
-		$(this).append('<option class="select-dash" disabled="disabled">----</option>');
-		for (i=0; i < fields_lang.length; i++) {
-			$(this).append('<option>'+fields_lang[i]+'</option>');
-		}
-	});
 	
 	$('#tools').find('#all_def_lang').each(function() {
 		for (i=0; i < fields_lang.length; i++) {
@@ -475,7 +466,7 @@ function convertSet() {
 function convertSet2WIKI(cont) {
 	
 	
-    var xml = "{{Photograph\n";
+    var xml = "{{"+templateName+"\n";
 	
 		// loop all inputs
 		cont.parent().find('input[type=text]').each(function() {
@@ -581,10 +572,10 @@ function generateTitles(test) {
 
 function transform() {
 
-	$( "#tools" ).show();
-	$( "#editor" ).show();
-
 	var template = $("#template_sel").val();
+	templateName = $("#template_sel option:selected").text();
+
+
 
     var xsl = Saxon.requestXML("xsl/"+template+".xslt");
     var xml = Saxon.parseXML($("#xml").val());
@@ -600,10 +591,35 @@ function transform() {
     $('.xml').each(function() {
 		addEvents($(this));
 	});
+ 
+
+ 
+
     
 }
 
+function setToolOptins() {
+	// let's read input names
+	fields = [];
+	$('.xml').first().find('input').each(function() {
 
+		var inputName = $(this).prop('name');
+		if (inputName.search(/_..$/) == -1) {
+			fields.push($(this).prop('name'))
+		} 
+	});
+	fields.sort()
+	// generate field select options for tools
+	$('#tools').find('select').not('#all_def_lang, #all_def_lang_sel, #add_link_pedia, #add_link_pedia_lang').each(function() {
+		for (i=0; i < fields.length; i++) {
+			$(this).append('<option>'+fields[i]+'</option>');
+		}
+		$(this).append('<option class="select-dash" disabled="disabled">----</option>');
+		for (i=0; i < fields_lang.length; i++) {
+			$(this).append('<option>'+fields_lang[i]+'</option>');
+		}
+	});
+}
 
 
 function regexTest() {

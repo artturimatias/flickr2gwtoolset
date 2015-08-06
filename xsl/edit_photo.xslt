@@ -25,7 +25,7 @@
 <xsl:template match="/set/record">
 	  <tr>
 		<th><h2>Kuva</h2></th>
-		<th><h2>Metadata</h2><div class="button toggle">Metadata</div></th>
+		<th><h2>Metadata</h2></th>
 		
 	</tr>
     <tr>
@@ -37,7 +37,13 @@
 			<xsl:apply-templates select=".//thumbnail"/>
 			<div>
 				<input class="enabled" type="checkbox" checked="checked"/> Include photo
-			</div>	
+			</div>
+			<div>	
+				<b>description:</b><xsl:value-of select=".//description"/>
+			</div>
+			<div>
+				<b>date:</b><xsl:value-of select=".//date"/>
+			</div>
 
         </td>
 		<td class="xml">
@@ -223,7 +229,6 @@
 			<!-- institution-->
 			<div class="holder">
 				<div class="div_title">Arkistoija</div>
-				<div class="link addinput">+</div>
 				<div class="frame">
 					<xsl:choose>
 						<xsl:when test=".//institution">
@@ -342,7 +347,7 @@
 				</div>
 			</div>	
 			
-			<!-- <div class="button wikicode">Wiki code</div> -->
+			<a href="#" class="button preview">preview</a> 
 			<!-- <div class="button xml_export">XML</div> -->
 			<!-- <button type="button" class="save2commons">Save to Commons!</button> -->
 		</td>
@@ -502,12 +507,38 @@
 <!-- basic fields -->
 <!-- ******************************************  -->
 
+<xsl:template match="depicted_people">
 
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">depicted_people:</div> 
+						<input class="autocomplete depicted_people" name="depicted_people" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
+
+
+
+<xsl:template match="depicted_place">
+
+			<div class="input_holder">
+				<div id="basic_input">
+					<div>
+						<div class="input_title">depicted_place:</div> 
+						<input class="autocomplete depicted_place" name="depicted_place" type="text" value="{.}"/>
+					</div>
+				</div>
+			</div>
+
+</xsl:template>
 
 <xsl:template match="institution">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">institution:</div> 
 						<input class="institution" name="institution" type="text" value="{.}"/>
@@ -519,24 +550,13 @@
 
 
 
-<xsl:template match="depicted_people">
 
-			<div class="input_holder">
-				<div id="basic_lang_input">
-					<div>
-						<div class="input_title">depicted_people:</div> 
-						<input class="depicted_people" name="depicted_people" type="text" value="{.}"/>
-					</div>
-				</div>
-			</div>
-
-</xsl:template>
 
 
 <xsl:template match="photographer">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">photographer:</div> 
 						<input class="photographer" name="photographer" type="text" value="{.}"/>
@@ -552,7 +572,7 @@
 <xsl:template match="camera_location">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">camera_location:</div> 
 						<input class="camera_location" name="camera_location" type="text" value="{.}"/>
@@ -566,7 +586,7 @@
 <xsl:template match="commons_title">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">commons_title:</div> 
 						<input class="commons_title" name="commons_title" type="text" value="{.}"/>
@@ -579,7 +599,7 @@
 <xsl:template match="permission">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">permission:</div> 
 						<input class="permission" name="permission" type="text" value="{.}"/>
@@ -598,7 +618,7 @@
 <xsl:template match="accession_number">
 
 			<div class="input_holder">
-				<div id="basic_lang_input">
+				<div id="basic_input">
 					<div>
 						<div class="input_title">accession number:</div> 
 						<input class="accession_number" name="accession_number" type="text" value="{.}"/>
@@ -727,7 +747,17 @@
 				<div>
 					<div class="input_title">date:</div> 
 					<input class="date" name="date" type="text" value="{.}" />
-				<div class="link remove_time">Poista tunnit, minuutit ja sekunnit</div> | <div class="link leave_year">Jätä vain vuosi</div></div>
+					date precision: <select class="other_date_select">
+						<option name="no_other_date">no other date</option>
+						<option name="after">after</option>
+						<option name="before">before</option>
+						<option name="circa">circa</option>
+						<option name="decade">decade (1960's)</option>
+						<option name="century">century (19th)</option>
+						<option class="select-dash" disabled="disabled">----range----</option>
+
+					</select>
+				</div>
 			</div>
 		</div>
    
